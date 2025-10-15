@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { NotaProps } from '../types'
 import ReactMarkdown from 'react-markdown';
+import markdownComponents from './MarkdownStyles';
 
 const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: () => void; onSave: (id: number, nuevoTitulo: string, nuevoTexto: string) => void }) => {
 
@@ -36,12 +37,7 @@ const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: (
                             />
                         ) : (
                             <div className='prose'>
-                                <ReactMarkdown components={{
-                                    h1: ({ node, ...props }) => <h1 className="text-4xl font-bold my-4" {...props} />,
-                                    p: ({ node, ...props }) => <p className="text-base mb-4" {...props} />,
-                                    a: ({ node, ...props }) => <a className="text-blue-600 underline hover:text-blue-800" {...props} />,
-                                    ul: ({ node, ...props }) => <ul className="list-disc pl-5 mb-4" {...props} />,
-                                }}>{contenido}</ReactMarkdown>
+                                <ReactMarkdown components={markdownComponents}>{contenido}</ReactMarkdown>
                             </div>
                         )
                     }
