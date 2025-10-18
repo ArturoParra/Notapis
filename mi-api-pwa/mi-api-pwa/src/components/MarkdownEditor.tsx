@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { NotaProps } from '../types'
 import ReactMarkdown from 'react-markdown';
 import markdownComponents from './MarkdownStyles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: () => void; onSave: (id: number, nuevoTitulo: string, nuevoTexto: string) => void }) => {
 
@@ -18,16 +20,18 @@ const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: (
         <>
             <div className='fixed inset-0 bg-gray-400/40 flex items-center justify-center p-4'>
                 <div className='bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl'>
-                    <input
-                        className='text-2xl font-bold mb-4 focus:ring-0 outline-none w-full'
-                        value={titulo}
-                        onChange={(e) => setTitulo(e.target.value)}
-                    />
-                    <button
-                        onClick={() => setIsEditing(!isEditing)}
-                        className='mb-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700' >
-                        {isEditing ? 'Ver' : 'Editar'}
-                    </button>
+                    <div className='flex items-center'>
+                        <input
+                            className='text-2xl font-bold mb-4 focus:ring-0 outline-none w-full'
+                            value={titulo}
+                            onChange={(e) => setTitulo(e.target.value)}
+                        />
+                        <button
+                            onClick={() => setIsEditing(!isEditing)}
+                            className='mb-4 px-4 py-2 rounded bg-white text-gray-400 hover:text-gray-600 transition ease-in-out duration-200' >
+                            {isEditing ? <FontAwesomeIcon icon={faEye} /> : <FontAwesomeIcon icon={faPenToSquare} />}
+                        </button>
+                    </div>
                     {
                         isEditing ? (
                             <textarea
