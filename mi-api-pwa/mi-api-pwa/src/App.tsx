@@ -61,7 +61,7 @@ function App() {
       <div className='bg-gray-100 min-h-screen'>
         <div className='flex flex-col items-center justify-center h-fit p-10 bg-gray-100'>
           <form className='w-full flex justify-center' onSubmit={(e) => e.preventDefault()}>
-            <div className='w-1/2 p-5 border border-gray-300 rounded-lg shadow-md text-gray-300 bg-white flex items-center hover:shadow-lg hover:scale-102 transition duration-200 ease-in-out'>
+            <div className='w-full md:w-1/2 p-5 border border-gray-300 rounded-lg shadow-md text-gray-300 bg-white flex items-center hover:shadow-lg hover:scale-102 transition duration-200 ease-in-out'>
               <FontAwesomeIcon icon={faMagnifyingGlass} />
               <input
                 type='text'
@@ -81,7 +81,7 @@ function App() {
             </div>
           </form>
         </div>
-        <div className='grid grid-cols-4 gap-4 items-center justify-between mx-10'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-between mx-10'>
           {
             notasFiltradas.map(nota => (
               <div className='cursor-pointer' key={nota.id} onClick={() => setNotaSeleccionada(nota)}>

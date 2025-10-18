@@ -1,5 +1,3 @@
-import React from "react";
-
 const H1 = ({ node, ...props }: { node?: any;[key: string]: any }) => <h1 className="text-4xl font-bold my-4 text-gray-900" {...props} />;
 const P = ({ node, ...props }: { node?: any;[key: string]: any }) => <p className="text-base mb-4 leading-relaxed" {...props} />;
 const A = ({ node, ...props }: { node?: any;[key: string]: any }) => <a className="text-blue-600 underline hover:text-blue-800" {...props} />;
