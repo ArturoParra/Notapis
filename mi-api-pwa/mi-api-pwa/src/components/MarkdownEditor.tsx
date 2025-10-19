@@ -64,12 +64,12 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
                     {
                         isEditing ? (
                             <textarea
-                                className='w-full h-[45vh] sm:h-96 p-4 sm:p-6 pt-2 rounded focus:ring-0 outline-none resize-none'
+                                className='w-full h-[45vh] sm:h-96 p-4 sm:p-6 pt-2 rounded focus:ring-0 outline-none resize-none overflow-y-auto scrollbar-thin'
                                 value={contenido}
                                 onChange={(e) => setContenido(e.target.value)}
                             />
                         ) : (
-                            <div className='prose max-h-[45vh] sm:max-h-96 overflow-y-auto pt-4 sm:pt-6 px-4 sm:px-6 w-full scrollbar-thin'>
+                            <div className='prose max-w-none w-full max-h-[45vh] sm:max-h-96 overflow-y-auto pt-4 sm:pt-6 px-4 sm:px-6 scrollbar-thin'>
                                 <ReactMarkdown components={markdownComponents}>{contenido}</ReactMarkdown>
                             </div>
                         )
