@@ -5,8 +5,11 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import NotaCard from './components/NotaCard'
 import type { NotaProps } from './types'
 import MarkdownEditor from './components/MarkdownEditor'
+import { useOnlineStatus } from './hooks/useOnlineStatus'
 
 function App() {
+
+  const isOnline = useOnlineStatus()
 
   const [query, setQuery] = useState('')
 
@@ -23,7 +26,7 @@ function App() {
   useEffect(() => {
     const fetchNotas = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/notas')
+        const res = await fetch('https://notapis-zok2.onrender.com/api/notas')
         if (!res.ok) throw new Error('Error al obtener las notas')
         const data = await res.json()
         setNotas(data)
@@ -38,7 +41,7 @@ function App() {
   const handleCrearNota = async (titulo:String) => {
     try{
       const nuevaNota = { titulo: titulo, texto: '' }
-      const res = await fetch('http://localhost:8080/api/notas', {
+      const res = await fetch('https://notapis-zok2.onrender.com/api/notas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -60,6 +63,13 @@ function App() {
 
   return (
     <>
+    {
+      !isOnline && (
+        <div className='bg-red-500 text-white text-center p-2'>
+          Estás desconectado. Algunas funciones pueden no estar disponibles.
+        </div>
+      )
+    }
       <div className='bg-gray-100 min-h-screen'>
         <div className='flex flex-col items-center justify-center h-fit p-10 bg-gray-100'>
           <form className='w-full flex justify-center' onSubmit={(e) => e.preventDefault()}>

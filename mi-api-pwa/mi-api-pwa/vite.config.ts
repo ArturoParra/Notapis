@@ -44,6 +44,28 @@ export default defineConfig({
             purpose: 'maskable'
           }
         ]
+      },
+      workbox: {
+        // Configuración para el Service Worker
+        runtimeCaching: [
+          {
+            // Regex para interceptar las llamadas a tu API
+            // Asegúrate que coincida con la URL de tu API
+            urlPattern: new RegExp('^https://notapis-zok2.onrender.com/api/notas.*'), 
+            
+            // Estrategia: StaleWhileRevalidate
+            handler: 'StaleWhileRevalidate',
+            
+            options: {
+              // Nombre de la caché donde se guardarán las notas
+              cacheName: 'api-notas-cache',
+              expiration: {
+                maxEntries: 50, // Máximo 50 respuestas de API cacheadas
+                maxAgeSeconds: 60 * 60 * 24 * 30 // Cachear por 30 días
+              }
+            }
+          }
+        ]
       }
     })
   ],

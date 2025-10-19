@@ -1,7 +1,7 @@
 import React from 'react'
 import type { NotaProps } from '../types'
 
-const NotaCard: React.FC<NotaProps> = ({ id, titulo, texto }) => {
+const NotaCard: React.FC<NotaProps> = ({ id: _id, titulo, texto }) => {
 
     const MAX_LENGTH = 30
 

@@ -15,7 +15,7 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
 
         try{
             const notaActualizada = { titulo: titulo, texto: contenido }
-            const res = await fetch(`http://localhost:8080/api/notas/${nota.id}`, {
+            const res = await fetch(`https://notapis-zok2.onrender.com/api/notas/${nota.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,7 +33,7 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
     
     const handleBorrar = async () => {
         try{
-            const res = await fetch(`http://localhost:8080/api/notas/${nota.id}`, {
+            const res = await fetch(`https://notapis-zok2.onrender.com/api/notas/${nota.id}`, {
                 method: 'DELETE'
             })
             if (!res.ok) throw new Error('Error al borrar la nota')
