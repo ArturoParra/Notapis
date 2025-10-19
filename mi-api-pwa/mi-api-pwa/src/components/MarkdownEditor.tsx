@@ -69,7 +69,7 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
                                 onChange={(e) => setContenido(e.target.value)}
                             />
                         ) : (
-                            <div className='prose max-h-[45vh] sm:max-h-96 overflow-y-auto pt-4 sm:pt-6 px-4 sm:px-6'>
+                            <div className='prose max-h-[45vh] sm:max-h-96 overflow-y-auto pt-4 sm:pt-6 px-4 sm:px-6 w-full scrollbar-thin'>
                                 <ReactMarkdown components={markdownComponents}>{contenido}</ReactMarkdown>
                             </div>
                         )
