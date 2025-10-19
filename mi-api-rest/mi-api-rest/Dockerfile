@@ -8,6 +8,8 @@ WORKDIR /app
 # Copiamos los archivos de Maven y descargamos dependencias
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+# Permisos de ejecución para el script de Maven
+RUN chmod +x ./mvnw
 RUN ./mvnw dependency:go-offline
 
 # Copiamos el resto del código fuente y construimos el proyecto
