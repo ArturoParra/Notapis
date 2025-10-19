@@ -3,17 +3,46 @@ import type { NotaProps } from '../types'
 import ReactMarkdown from 'react-markdown';
 import markdownComponents from './MarkdownStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFloppyDisk, faPenToSquare, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: () => void; onSave: (id: number, nuevoTitulo: string, nuevoTexto: string) => void }) => {
+const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; onClose: () => void; onSave: (id: number, nuevoTitulo: string, nuevoTexto: string) => void; onDelete: (id: number) => void }) => {
 
     const [contenido, setContenido] = useState(nota.texto);
     const [titulo, setTitulo] = useState(nota.titulo);
     const [isEditing, setIsEditing] = useState(false);
 
-    const handleGuardar = () => {
+    const handleGuardar = async () => {
+
+        try{
+            const notaActualizada = { titulo: titulo, texto: contenido }
+            const res = await fetch(`http://localhost:8080/api/notas/${nota.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(notaActualizada)
+            })
+            if (!res.ok) throw new Error('Error al actualizar la nota')
+        }catch(error){
+            console.error(error)
+        }
+
         onSave(nota.id, titulo, contenido);
         onClose();
+    }
+    
+    const handleBorrar = async () => {
+        try{
+            const res = await fetch(`http://localhost:8080/api/notas/${nota.id}`, {
+                method: 'DELETE'
+            })
+            if (!res.ok) throw new Error('Error al borrar la nota')
+            onDelete(nota.id);
+        }catch(error){
+            console.error(error)
+        }finally{
+            onClose();
+        }
     }
 
     return (
@@ -45,9 +74,14 @@ const MarkdownEditor = ({ nota, onClose, onSave }: { nota: NotaProps; onClose: (
                             </div>
                         )
                     }
-                    <div className='flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 p-4 sm:p-6'>
-                        <button onClick={onClose} className='w-full sm:w-auto px-4 py-2 rounded bg-gray-200 hover:bg-gray-300'>Cancelar</button>
-                        <button onClick={handleGuardar} className='w-full sm:w-auto px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700'>Guardar y Cerrar</button>
+                    <div className='flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6'>
+                        <div className='w-full flex items-center'>
+                            <button onClick={() => {handleBorrar(); onClose();}} className='bg-white text-gray-400 hover:text-red-600 transition ease-in-out duration-200'><FontAwesomeIcon icon={faTrash} /></button>
+                        </div>
+                        <div className='flex items-center justify-end gap-4'>
+                            <button onClick={onClose} className='bg-white text-gray-400 hover:text-gray-600 transition ease-in-out duration-200'><FontAwesomeIcon icon={faXmark} /></button>
+                            <button onClick={handleGuardar} className='bg-white text-gray-400 hover:text-green-600 transition ease-in-out duration-200'><FontAwesomeIcon icon={faFloppyDisk} /></button>
+                        </div>
                     </div>
                 </div>
             </div>

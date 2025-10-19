@@ -53,6 +53,11 @@ function App() {
     }
   }
 
+  const handleEliminar = (id: number) => {
+    setNotas(prev => prev.filter(nota => nota.id !== id))
+    setNotaSeleccionada(null)
+  }
+
   return (
     <>
       <div className='bg-gray-100 min-h-screen'>
@@ -108,6 +113,7 @@ function App() {
                 nota={notaSeleccionada}
                 onClose={() => setNotaSeleccionada(null)}
                 onSave={handleGuardar}
+                onDelete={handleEliminar}
               />
             )
           }
