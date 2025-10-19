@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
@@ -10,43 +10,7 @@ function App() {
 
   const [query, setQuery] = useState('')
 
-  const [notas, setNotas] = useState<NotaProps[]>([
-    {
-      id: 1,
-      titulo: 'Nota',
-      texto: '# Hola mundo\nEste es un texto en **Markdown**.'
-    },
-    {
-      id: 2,
-      titulo: 'Lista de compras',
-      texto: '# Lista de compras\n- Leche\n- Pan\n- Huevos'
-    },
-    {
-      id: 3,
-      titulo: 'Clases',
-      texto: '# Clases\nEste es un texto sobre las clases.'
-    },
-    {
-      id: 4,
-      titulo: 'Escuela',
-      texto: '# Escuela\nEste es un texto sobre la escuela.'
-    },
-    {
-      id: 5,
-      titulo: 'Nota 2',
-      texto: '# Nota 2\nEste es un texto sobre la nota 2.'
-    },
-    {
-      id: 6,
-      titulo: 'Escuela 2',
-      texto: '# Escuela 2\nEste es un texto sobre la escuela 2.'
-    },
-    {
-      id: 7,
-      titulo: 'Nota de clase',
-      texto: '# Nota de clase\nEste es un texto sobre la nota de clase.'
-    },
-  ])
+  const [notas, setNotas] = useState<NotaProps[]>([ ])
 
   const [notaSeleccionada, setNotaSeleccionada] = useState<NotaProps | null>(null)
 
@@ -55,6 +19,39 @@ function App() {
   }
 
   const notasFiltradas = notas.filter(nota => nota.titulo.includes(query) || nota.texto.includes(query))
+
+  useEffect(() => {
+    const fetchNotas = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/notas')
+        if (!res.ok) throw new Error('Error al obtener las notas')
+        const data = await res.json()
+        setNotas(data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchNotas()
+  }, [])
+
+  const handleCrearNota = async (titulo:String) => {
+    try{
+      const nuevaNota = { titulo: titulo, texto: '' }
+      const res = await fetch('http://localhost:8080/api/notas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(nuevaNota)
+      })
+      if (!res.ok) throw new Error('Error al crear la nota')
+      const data = await res.json()
+      setNotas([...notas, data])
+    }catch(error){
+      console.error(error)
+    }
+  }
 
   return (
     <>
@@ -72,16 +69,28 @@ function App() {
                 onKeyDown={(e) => { if (e.key === 'Escape') setQuery('') }}
               />
               {query && (
-                <button
-                  type='button'
-                  className='ml-2 text-gray-400 hover:text-gray-600' onClick={() => setQuery('')}>
-                  ×
-                </button>
+                <>
+                  <button
+                    type='button'
+                    className='ml-2 text-gray-400 hover:text-gray-600' onClick={() => setQuery('')}>
+                    ×
+                  </button>
+                  <button
+                    type='button'
+                    className='ml-2 text-gray-400 hover:text-gray-600' onClick={() => {handleCrearNota(query), setQuery('')}}>
+                    Crear Nota
+                  </button>
+                </>
               )}
             </div>
           </form>
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-between mx-10'>
+          {
+            notasFiltradas.length === 0 && (
+              <p className='text-gray-500 col-span-full text-center'>No se encontraron notas.</p>
+            )
+          }
           {
             notasFiltradas.map(nota => (
               <div className='cursor-pointer' key={nota.id} onClick={() => setNotaSeleccionada(nota)}>
