@@ -42,7 +42,7 @@ function App() {
   const handleCrearNota = async (titulo:String) => {
     try{
       const nuevaNota = { titulo: titulo, texto: '' }
-      const res = await fetch('https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas', {
+      const res = await fetch(getApiUrl('/api/notas'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

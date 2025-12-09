@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import markdownComponents from './MarkdownStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faFloppyDisk, faPenToSquare, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { getApiUrl } from '../../api/config';
 
 const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; onClose: () => void; onSave: (id: number, nuevoTitulo: string, nuevoTexto: string) => void; onDelete: (id: number) => void }) => {
 
@@ -15,7 +16,7 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
 
         try{
             const notaActualizada = { titulo: titulo, texto: contenido }
-            const res = await fetch(`https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas/${nota.id}`, {
+            const res = await fetch(getApiUrl(`/api/notas/${nota.id}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -33,7 +34,7 @@ const MarkdownEditor = ({ nota, onClose, onSave, onDelete }: { nota: NotaProps; 
     
     const handleBorrar = async () => {
         try{
-            const res = await fetch(`https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas/${nota.id}`, {
+            const res = await fetch(getApiUrl(`/api/notas/${nota.id}`), {
                 method: 'DELETE'
             })
             if (!res.ok) throw new Error('Error al borrar la nota')

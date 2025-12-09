@@ -1,5 +1,5 @@
 package com.example.mi_api_rest.config;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -7,13 +7,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    // 1. Inyectamos el valor desde application.properties (o variable de entorno)
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**") // Aplica la configuración a todas las rutas bajo /api
-                .allowedOrigins("https://notapispwa.onrender.com",
-                        "https://brave-meadow-06940d10f.3.azurestaticapps.net") // Permite a URL del sitio donde se hostea el cliente
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
-                .allowedHeaders("*") // Permite todas las cabeceras
+        // 2. Convertimos el texto (separado por comas) en una lista de URLs
+        // Si la variable viene vacía por error, evitamos que falle usando un array vacío
+        String[] origins = allowedOrigins != null ? allowedOrigins.split(",") : new String[]{};
+
+        registry.addMapping("/**")
+                .allowedOrigins(origins)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
                 .allowCredentials(true);
+
+        // (Opcional) Log para que veas en la consola qué URLs se aceptaron al arrancar
+        System.out.println("CORS configurado para: " + allowedOrigins);
     }
 }
