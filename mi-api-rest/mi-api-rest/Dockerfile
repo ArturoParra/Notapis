@@ -1,37 +1,44 @@
-# ----- Etapa 1: CONSTRUIR LA APP -----
-# Usamos una imagen de OpenJDK 17 completa para construir el .jar
-FROM openjdk:17-jdk-slim AS builder
+# ==========================================
+# Etapa 1: CONSTRUIR LA APP (Builder)
+# ==========================================
+# ¡OJO! Usamos "jdk" aquí porque necesitamos compilar (javac)
+FROM eclipse-temurin:17-jdk AS builder
 
-# Establecemos el directorio de trabajo
 WORKDIR /app
 
-# Copiamos los archivos de Maven y descargamos dependencias
+# 1. Copiamos archivos de configuración de Maven
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-# Permisos de ejecución para el script de Maven
-RUN chmod +x ./mvnw
+
+# 2. EL ARREGLO PARA WINDOWS:
+# Corrige los saltos de línea (\r) y da permisos de ejecución al mvnw
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw
+
+# 3. Descarga dependencias (Caché)
 RUN ./mvnw dependency:go-offline
 
-# Copiamos el resto del código fuente y construimos el proyecto
+# 4. Copia el código fuente y compila
 COPY src ./src
 RUN ./mvnw clean package -DskipTests
 
+# ==========================================
+# Etapa 2: IMAGEN FINAL (Runner)
+# ==========================================
+# Usamos "jre" (Runtime) porque es más ligera y segura para producción
+# Usamos la versión normal (Debian) para que funcionen tus comandos useradd
+FROM eclipse-temurin:17-jre
 
-# ----- Etapa 2: CREAR LA IMAGEN FINAL -----
-# Usamos una imagen ligera (slim) solo con lo necesario para EJECUTAR
-FROM openjdk:17-jdk-slim
+WORKDIR /app
 
-# Creamos un usuario no-root por seguridad
+# Creamos usuario (funciona bien porque esta imagen es Debian, no Alpine)
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 # Copiamos SÓLO el .jar construido de la etapa anterior
 COPY --from=builder /app/target/*.jar app.jar
 
-# El puerto que expone tu app de Spring Boot
 EXPOSE 8080
 
-# Damos permisos al nuevo usuario
+# Usamos el usuario limitado
 USER appuser
 
-# El comando para correr la app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

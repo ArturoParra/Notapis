@@ -6,6 +6,7 @@ import NotaCard from './components/NotaCard'
 import type { NotaProps } from './types'
 import MarkdownEditor from './components/MarkdownEditor'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
+import { getApiUrl } from '../api/config'
 
 function App() {
 
@@ -26,7 +27,7 @@ function App() {
   useEffect(() => {
     const fetchNotas = async () => {
       try {
-        const res = await fetch('https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas')
+        const res = await fetch(getApiUrl('/api/notas'))
         if (!res.ok) throw new Error('Error al obtener las notas')
         const data = await res.json()
         setNotas(data)
