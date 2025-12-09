@@ -51,7 +51,7 @@ export default defineConfig({
           {
             // Regex para interceptar las llamadas a tu API
             // Asegúrate que coincida con la URL de tu API
-            urlPattern: new RegExp('^https://notapis-zok2.onrender.com/api/notas.*'), 
+            urlPattern: new RegExp('https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas.*'), 
             
             // Estrategia: StaleWhileRevalidate
             handler: 'StaleWhileRevalidate',

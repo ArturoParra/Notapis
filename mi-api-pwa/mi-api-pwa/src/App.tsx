@@ -26,7 +26,7 @@ function App() {
   useEffect(() => {
     const fetchNotas = async () => {
       try {
-        const res = await fetch('https://notapis-zok2.onrender.com/api/notas')
+        const res = await fetch('https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas')
         if (!res.ok) throw new Error('Error al obtener las notas')
         const data = await res.json()
         setNotas(data)
@@ -41,7 +41,7 @@ function App() {
   const handleCrearNota = async (titulo:String) => {
     try{
       const nuevaNota = { titulo: titulo, texto: '' }
-      const res = await fetch('https://notapis-zok2.onrender.com/api/notas', {
+      const res = await fetch('https://notapisbackendserver-ezebehd9erckfqgv.canadacentral-01.azurewebsites.net/api/notas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
