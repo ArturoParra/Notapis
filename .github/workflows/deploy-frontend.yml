@@ -3,34 +3,31 @@ name: Deploy Frontend to Firebase Hosting
 on:
   push:
     branches:
-      - master # Asegúrate que esta sea tu rama principal (main o master)
-
+      - master # O la rama que uses
+      
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    # CAMBIO CLAVE: Usamos 'defaults' para ejecutar comandos en la subcarpeta
-    defaults:
-      run:
-        working-directory: ./mi-api-pwa/mi-api-pwa 
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
-        # ... (código omitido)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' 
 
       - name: Install Dependencies and Build
-        # Gracias a 'defaults' este comando se corre dentro de 'mi-api-pwa/mi-api-pwa'
+        # AQUÍ ES DONDE ESTÁ EL CAMBIO CLAVE: agregamos working-directory
         run: |
           npm ci
           npm run build
+        working-directory: ./mi-api-pwa/mi-api-pwa # <--- DEBE IR AQUÍ
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          # Usamos la clave de GCP que ya subiste
           firebaseServiceAccount: '${{ secrets.GCP_SA_KEY }}' 
           channelId: live
           projectId: notapis-481017
