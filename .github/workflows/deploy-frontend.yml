@@ -30,4 +30,6 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.GCP_SA_KEY }}' 
           channelId: live
-          projectId: notapis-481017
+          projectId: notapis-481017 
+          # CLAVE: Indica la subcarpeta donde debe buscar firebase.json
+          entryPoint: ./mi-api-pwa/mi-api-pwa
