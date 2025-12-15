@@ -8,17 +8,20 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+    # CAMBIO CLAVE: Usamos 'defaults' para ejecutar comandos en la subcarpeta
+    defaults:
+      run:
+        working-directory: ./mi-api-pwa/mi-api-pwa 
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18' # Ajusta la versión si es necesario
+        # ... (código omitido)
 
       - name: Install Dependencies and Build
-        # Corremos npm ci para instalar dependencias y luego npm run build
+        # Gracias a 'defaults' este comando se corre dentro de 'mi-api-pwa/mi-api-pwa'
         run: |
           npm ci
           npm run build
