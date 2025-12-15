@@ -1,0 +1,68 @@
+name: 🚀 Deploy Frontend to AWS S3 & CloudFront
+
+on:
+  push:
+    branches:
+      - master # Usaremos 'master' como en tu script original
+  workflow_dispatch: # Permite ejecución manual
+
+# 1. DEFINICIÓN DE VARIABLES DE ENTORNO DE AWS
+env:
+  # ⚠️ Directorio de tu Frontend (Basado en tu script original)
+  FRONTEND_DIR: ./mi-api-pwa/mi-api-pwa 
+  
+  # ⚠️ Directorio de salida después de 'npm run build' (Ajustar si es diferente de 'dist')
+  BUILD_DIR_NAME: dist 
+  
+  # Variables de AWS tomadas de los Secrets de GitHub (ya configurados)
+  S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.AWS_CLOUDFRONT_ID }}
+  AWS_REGION: us-east-2 # Asegúrate de que esta región coincida con tu S3/CloudFront
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    
+    # Permisos de seguridad necesarios para acceder a los secrets
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' 
+          cache: 'npm'
+          # La ruta de cache debe ser la misma que la del working-directory
+          cache-dependency-path: ${{ env.FRONTEND_DIR }}/package-lock.json
+
+      # 🧱 PASO CRÍTICO: INSTALAR DEPENDENCIAS Y CONSTRUIR (INYECCIÓN DE URL DEL BACKEND)
+      - name: ⚙️ Install Dependencies and Build
+        run: |
+          npm ci
+          npm run build
+        working-directory: ${{ env.FRONTEND_DIR }}
+        env:
+          # Sustituimos VITE_CLOUD_RUN_URL por la URL de Elastic Beanstalk (AWS)
+          VITE_API_URL: ${{ secrets.VITE_AWS_BACKEND_URL }}
+          
+      # 🔑 CONFIGURAR CREDENCIALES DE AWS
+      # Usa los Secrets (ID y Key) para autenticarse con AWS
+      - name: 🔑 Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # ⬆️ DESPLIEGUE A S3 (Reemplaza la acción de Firebase)
+      - name: ⬆️ Deploy static files to S3
+        run: aws s3 sync ${{ env.FRONTEND_DIR }}/${{ env.BUILD_DIR_NAME }} s3://${{ env.S3_BUCKET_NAME }} --delete
+
+      # ⚡️ INVALIDAR CLOUDFRONT (Reemplaza la acción de Firebase)
+      - name: ⚡️ Invalidate CloudFront Cache
+        run: aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
